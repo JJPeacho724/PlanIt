@@ -1,74 +1,55 @@
-Planner Monorepo
-=================
+# Julian Chauhan - Resume Website
 
-Monorepo with Next.js 14 app, Auth.js (Google OAuth), Prisma + Supabase Postgres (pgvector), API routes, `packages/core` for domain logic, and `packages/ai` for prompts/tools.
+A minimalist, interactive resume website built with HTML, CSS, and JavaScript.
 
-Structure
----------
+## Features
 
-- apps/web: Next.js 14 (App Router), Tailwind, shadcn/ui-ready, FullCalendar timeline, API routes in `app/api/*`
-- packages/core: Domain logic, zod-validated ENV loader
-- packages/ai: Prompts, schemas, and a placeholder planner (`buildPlan`)
+- Clean, minimalist grayscale design
+- Interactive hover effects and animations
+- Smooth scrolling navigation
+- Responsive design for all devices
+- Professional typography and layout
 
-Quickstart
-----------
+## Deployment Options
 
-1) Create `.env` at repository root:
+### Option 1: GitHub Pages (Recommended - Free)
 
-DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB?schema=public
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=replace-with-random-long-secret
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-OPENAI_API_KEY=...
-SLACK_CLIENT_ID=...
-SLACK_CLIENT_SECRET=...
-SLACK_SIGNING_SECRET=...
-ENCRYPTION_KEY=base64-32-bytes
+1. Create a new repository on GitHub
+2. Push this code to your repository:
+   ```bash
+   git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+   git branch -M main
+   git push -u origin main
+   ```
+3. Go to repository Settings → Pages
+4. Select "Deploy from a branch" and choose "main"
+5. Your site will be available at: `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME`
 
-Generate a 32-byte base64 key: `openssl rand -base64 32`
+### Option 2: Netlify (Free)
 
-2) Install deps and run dev server:
+1. Go to [netlify.com](https://netlify.com)
+2. Drag and drop your project folder
+3. Get a custom URL like: `https://your-site-name.netlify.app`
 
-- npm install
-- npm run prisma:generate -w @acme/web
-- npm run dev -w @acme/web
+### Option 3: Vercel (Free)
 
-3) Database: enable `pgvector` on Supabase/Postgres
+1. Go to [vercel.com](https://vercel.com)
+2. Connect your GitHub repository
+3. Deploy automatically with custom domain
 
-- Run this SQL once on your database: `create extension if not exists vector;`
+### Option 4: Local Development
 
-4) Prisma
+Simply open `index.html` in any web browser to view locally.
 
-- Edit database connection in `.env`
-- Create and apply migrations: `npm run prisma:migrate -w @acme/web`
+## Files
 
-Notes
------
+- `index.html` - Main HTML structure
+- `styles.css` - CSS styling and animations
+- `README.md` - This file
 
-- Auth.js (NextAuth) route handlers under `app/api/auth/[...nextauth]/route.ts`
-- Planner chat lives in a persistent right sidebar (`PlannerSidebar`), and timeline uses FullCalendar on the main area
-- ENV loader is provided by `@acme/core/env` and used across the app and clients
+## Customization
 
-Scripts
--------
-
-- npm run dev -w @acme/web – start Next.js
-- npm run build -w @acme/web – build
-- npm run prisma:* -w @acme/web – manage Prisma
- - npm run cron -w @acme/web – run background ingestion (Gmail, Slack, Calendar cache)
-
-Ingest API
-----------
-
-- POST `/api/ingest/gmail`: Pull new Gmail messages since last cursor, persist `MessageIngest`, run minimal rules, create `Task`s with source pointers.
-- POST `/api/ingest/slack`: Pull Slack DMs/MPIM history since last cursor, persist `MessageIngest`, run minimal rules, create `Task`s.
-- POST `/api/ingest/calendar`: Cache Google Calendar events into `CalendarBusy` for busy-time awareness.
-
-Rules engine
-------------
-
-- Ignores auto-generated messages (`List-Unsubscribe`, `Precedence: bulk`, `Auto-Submitted`, `X-Auto-Response-Suppress`).
-- Converts to tasks only if action language present (e.g., "by", "due", "can you", "schedule", date-like phrases).
-- Attaches source pointers by linking tasks to `MessageIngest` via `Task.createdFromMessageId`.
+- Update personal information in `index.html`
+- Modify colors and styles in `styles.css`
+- Add or remove sections as needed
 

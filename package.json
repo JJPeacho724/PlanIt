@@ -1,0 +1,22 @@
+{
+  "name": "planner-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "build": "npm run build -w @acme/web",
+    "dev": "npm run dev -w @acme/web",
+    "lint": "npm run lint -w @acme/web",
+    "prepare": "husky install || true"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  }
+}
+

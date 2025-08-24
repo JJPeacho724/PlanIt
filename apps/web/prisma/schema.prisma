@@ -1,0 +1,258 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // Enable pgvector for embedding support
+  extensions = [vector(schema: "public")]
+}
+
+// NextAuth core models
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // User profile, time zone, and preferences
+  profile     Json?
+  timeZone    String?   @default("UTC")
+  preferences Json?
+
+  accounts   Account[]
+  sessions   Session[]
+
+  tasks          Task[]
+  credentials    Credential[]
+  eventDrafts    EventDraft[]
+  events         Event[]
+  ingestedMsgs   MessageIngest[]
+  memories       Memory[]
+  auditLogs      AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @map("refresh_token")
+  access_token      String?  @map("access_token")
+  expires_at        Int?     @map("expires_at")
+  token_type        String?  @map("token_type")
+  scope             String?
+  id_token          String?  @map("id_token")
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Shared enums
+enum Source {
+  EMAIL
+  SLACK
+  MANUAL
+  CALENDAR
+}
+
+enum CredentialProvider {
+  GOOGLE
+  SLACK
+}
+
+// Credentials for external providers (tokens should be stored encrypted)
+model Credential {
+  id         String              @id @default(cuid())
+  userId     String
+  provider   CredentialProvider
+  // Store encrypted token bytes (ciphertext). Key management handled at app layer.
+  encryptedAccessToken  Bytes?
+  encryptedRefreshToken Bytes?
+  expiresAt  DateTime?
+  scope      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, provider])
+}
+
+// Canonical Task model
+model Task {
+  id                 String   @id @default(cuid())
+  userId             String
+  source             Source
+  title              String
+  description        String?
+  priority           Int?     @default(0)
+  effortMinutes      Int?
+  dueAt              DateTime?
+  hardDeadline       Boolean  @default(false)
+  location           String?
+  tags               String[] @default([])
+  requiresHuman      Boolean  @default(false)
+  blockingTaskId     String?
+  createdFromMessageId String?
+
+  // pgvector column for embeddings. Prisma represents this as Unsupported until native type exists.
+  embedding Unsupported("vector")?
+
+  // Relations
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  blockingTask Task? @relation("TaskBlocks", fields: [blockingTaskId], references: [id])
+  blockedByTasks Task[] @relation("TaskBlocks")
+  createdFrom MessageIngest? @relation("TaskFromMessage", fields: [createdFromMessageId], references: [id])
+  eventDrafts EventDraft[]
+  events      Event[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, dueAt])
+}
+
+// Proposed calendar blocks with rationale and confidence
+model EventDraft {
+  id         String   @id @default(cuid())
+  userId     String
+  taskId     String?
+  title      String?
+  startsAt   DateTime
+  endsAt     DateTime
+  rationale  String?
+  confidence Float?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Confirmed calendar events
+model Event {
+  id         String   @id @default(cuid())
+  userId     String
+  taskId     String?
+  title      String
+  startsAt   DateTime
+  endsAt     DateTime
+  externalId String?
+  calendarId String?
+  confirmed  Boolean  @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, startsAt])
+}
+
+// Ingested messages (email/slack/etc.) with hashed identifiers and minimal metadata
+model MessageIngest {
+  id              String   @id @default(cuid())
+  userId          String
+  source          Source
+  hashedMessageId String   @unique
+  receivedAt      DateTime
+  metadata        Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[] @relation("TaskFromMessage")
+
+  createdAt DateTime @default(now())
+}
+
+// Cursor tracking for periodic ingestion per source
+model IngestCursor {
+  id            String  @id @default(cuid())
+  userId        String
+  source        Source
+  cursor        String?
+  lastFetchedAt DateTime?
+  metadata      Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, source])
+}
+
+// Local cache of external calendar busy events for scheduling awareness
+model CalendarBusy {
+  id              String   @id @default(cuid())
+  userId          String
+  source          Source   @default(CALENDAR)
+  externalEventId String
+  calendarId      String?
+  title           String?
+  startsAt        DateTime
+  endsAt          DateTime
+  metadata        Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, externalEventId])
+  @@index([userId, startsAt])
+}
+
+// Long-lived user facts for planning
+model Memory {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  metadata  Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Audit log of actions and tool invocations
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  tool      String
+  before    Json?
+  after     Json?
+  timestamp DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId, timestamp])
+}
+

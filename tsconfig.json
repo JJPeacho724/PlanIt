@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "checkJs": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@acme/core": ["packages/core/src/index.ts"],
+      "@acme/core/*": ["packages/core/src/*"],
+      "@acme/ai": ["packages/ai/src/index.ts"],
+      "@acme/ai/*": ["packages/ai/src/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["packages/**/*", "apps/**/*"]
+}
+

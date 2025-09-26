@@ -9,3 +9,5 @@ build
 .env.local
 *.log
 
+resume-website/
+.env.backup

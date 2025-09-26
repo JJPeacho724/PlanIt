@@ -1,4 +1,4 @@
-import { TaskInput } from './task'
+import { TaskInput } from './task.js'
 
 export interface PlanResult {
   title?: string

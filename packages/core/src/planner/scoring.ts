@@ -1,4 +1,4 @@
-import { PlannerTaskInput } from './types'
+import { PlannerTaskInput } from './types.js'
 
 // Heuristic score function v1
 // Score = f(priority, proximity to due, effort, dependency)

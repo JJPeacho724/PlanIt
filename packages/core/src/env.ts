@@ -7,10 +7,11 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
   OPENAI_API_KEY: z.string().min(1),
-  SLACK_CLIENT_ID: z.string().min(1).optional().default(''),
-  SLACK_CLIENT_SECRET: z.string().min(1).optional().default(''),
-  SLACK_SIGNING_SECRET: z.string().min(1).optional().default(''),
+  SLACK_CLIENT_ID: z.string().optional().default(''),
+  SLACK_CLIENT_SECRET: z.string().optional().default(''),
+  SLACK_SIGNING_SECRET: z.string().optional().default(''),
   ENCRYPTION_KEY: z.string().min(44), // 32 bytes base64 is 44 chars
+  EMAIL_FOCUSED_INGEST: z.string().optional().default('false'),
 })
 
 export type Env = z.infer<typeof envSchema>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Sparkly Button with Authentication</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .button { background: #0070f3; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .button:hover { background: #0056b3; }
+        .output { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0; max-height: 400px; overflow-y: auto; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Calendar Integration</h1>
+    <p>This page will test the sparkly button functionality while you're signed in.</p>
+    
+    <div>
+        <button class="button" onclick="checkAuth()">1. Check Authentication</button>
+        <button class="button" onclick="createSampleTask()">2. Create Sample Task</button>
+        <button class="button" onclick="testSparklyButton()">3. Test Sparkly Button</button>
+        <button class="button" onclick="generateEvents()">4. Generate Events Directly</button>
+        <button class="button" onclick="clearOutput()">Clear Output</button>
+    </div>
+    
+    <div id="output" class="output">
+        <p>Click the buttons above to test the calendar integration...</p>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'loading' ? 'loading' : '';
+            output.innerHTML += `<div class="${className}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '<p>Output cleared...</p>';
+        }
+
+        async function checkAuth() {
+            log('Checking authentication...', 'loading');
+            try {
+                const response = await fetch('/api/auth/session');
+                const session = await response.json();
+                
+                if (session?.user?.email) {
+                    log(`✅ Authenticated as: ${session.user.email}`, 'success');
+                    return true;
+                } else {
+                    log('❌ Not authenticated. Please sign in to the main app first.', 'error');
+                    return false;
+                }
+            } catch (error) {
+                log(`❌ Auth check failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        async function createSampleTask() {
+            log('Creating sample task...', 'loading');
+            
+            if (!(await checkAuth())) return;
+            
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: 'Test Task for Calendar Integration',
+                        description: 'This is a test task to verify calendar event creation',
+                        priority: 1,
+                        effortMinutes: 60,
+                        tags: ['test', 'calendar']
+                    })
+                });
+                
+                if (response.ok) {
+                    const task = await response.json();
+                    log(`✅ Created task: ${task.task.title}`, 'success');
+                } else {
+                    const error = await response.text();
+                    log(`❌ Task creation failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Task creation error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSparklyButton() {
+            log('Testing sparkly button (planner API)...', 'loading');
+            
+            if (!(await checkAuth())) return;
+            
+            try {
+                const response = await fetch('/api/planner', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: 'Schedule my tasks from emails and calendar',
+                        autoGenerateEvents: true,
+                        includeGoogleData: true
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Planner API responded successfully`, 'success');
+                    log(`📊 Event drafts created: ${data.eventDrafts?.length || 0}`);
+                    
+                    if (data.eventDrafts && data.eventDrafts.length > 0) {
+                        log('🎉 Event drafts found:', 'success');
+                        data.eventDrafts.forEach((draft, i) => {
+                            const start = new Date(draft.startsAt).toLocaleString();
+                            log(`   ${i + 1}. ${draft.title || 'Untitled'} (${start})`);
+                        });
+                    } else {
+                        log('⚠️ No event drafts were created. Check server logs.', 'error');
+                        log(`Reply snippet: ${data.reply?.substring(0, 100)}...`);
+                    }
+                } else {
+                    const error = await response.text();
+                    log(`❌ Planner API failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Sparkly button test error: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateEvents() {
+            log('Testing direct event generation...', 'loading');
+            
+            if (!(await checkAuth())) return;
+            
+            try {
+                const response = await fetch('/api/events/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        includeGoogleData: true,
+                        preferences: {
+                            breakMinutes: 15,
+                            minBlockMinutes: 30,
+                            resolveConflicts: 'push'
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Event generation successful`, 'success');
+                    log(`📊 Created ${data.eventDrafts?.length || 0} event drafts`);
+                    
+                    if (data.eventDrafts && data.eventDrafts.length > 0) {
+                        data.eventDrafts.forEach((draft, i) => {
+                            const start = new Date(draft.startsAt).toLocaleString();
+                            log(`   ${i + 1}. ${draft.title || 'Untitled'} (${start})`);
+                        });
+                    }
+                    
+                    if (data.metadata) {
+                        log(`📋 Tasks: ${data.metadata.totalTasks}, Scheduled: ${data.metadata.scheduledEvents}, Unscheduled: ${data.metadata.unscheduledTasks}`);
+                    }
+                } else {
+                    const error = await response.text();
+                    log(`❌ Event generation failed: ${error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Event generation error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-check auth on page load
+        window.onload = () => {
+            log('🔍 Page loaded. Testing authentication...');
+            checkAuth();
+        };
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-export * from './types'
-export * from './time'
-export * from './algorithm'
-export { scoreTask as scorePlannerTask } from './scoring'
+export * from './types.js'
+export * from './time.js'
+export * from './algorithm.js'
+export { scoreTask as scorePlannerTask } from './scoring.js'
 

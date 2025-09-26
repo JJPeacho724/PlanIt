@@ -1,7 +1,7 @@
 // Minimal timezone helpers without external deps. Consumers should pass proper Date objects created in the desired TZ if needed.
 // We operate using JS Date in UTC internally but produce date keys and windows using the provided IANA string only for labeling.
 
-import { PlannerPreferences } from './types'
+import { PlannerPreferences } from './types.js'
 
 export function minutesBetween(start: Date, end: Date): number {
   return Math.max(0, Math.floor((end.getTime() - start.getTime()) / 60000))

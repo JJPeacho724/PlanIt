@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
   // Refresh if needed; token refresh handled by googleapis when expired
   const gmail = createGmailClient(oauth2Client)
 
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  const q = `newer_than:30d label:INBOX` // Gmail search query
+  const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+  const q = `newer_than:5d label:INBOX` // Gmail search query
 
   let nextPageToken: string | undefined
   const ingested: number = 0

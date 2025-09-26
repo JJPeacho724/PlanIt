@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { taskDraftSchema } from './schemas'
+import { taskDraftSchema } from './schemas.js'
 
 // JSON Schema for TaskDraft to embed into tool return docs (for reference)
 const taskDraftJsonSchema = {

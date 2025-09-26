@@ -1,4 +1,4 @@
-import { TaskDraft } from './schemas'
+import { TaskDraft } from './schemas.js'
 
 const PRIORITY_ORDER = ['low', 'medium', 'high', 'urgent'] as const
 type Priority = typeof PRIORITY_ORDER[number]

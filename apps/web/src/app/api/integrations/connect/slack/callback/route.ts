@@ -8,11 +8,11 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url)
   const code = url.searchParams.get('code')
   const state = url.searchParams.get('state')
-  if (!code || !state) return NextResponse.redirect('/?error=missing_code')
+  if (!code || !state) return NextResponse.redirect(new URL('/?error=missing_code', url.origin))
 
   const parsed = JSON.parse(decodeURIComponent(state))
   const userId: string | undefined = parsed?.u
-  if (!userId) return NextResponse.redirect('/?error=missing_user')
+  if (!userId) return NextResponse.redirect(new URL('/?error=missing_user', url.origin))
 
   const redirectUri = new URL('/api/integrations/connect/slack/callback', url.origin).toString()
   const body = new URLSearchParams({
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     body: body.toString(),
   })
   const data = await resp.json() as any
-  if (!data.ok) return NextResponse.redirect('/settings/connections?error=slack_oauth')
+  if (!data.ok) return NextResponse.redirect(new URL('/settings/connections?error=slack_oauth', url.origin))
 
   const userToken: string | undefined = data.authed_user?.access_token
   const expirySeconds: number | undefined = data.authed_user?.expires_in
@@ -50,6 +50,6 @@ export async function GET(req: NextRequest) {
     },
   })
 
-  return NextResponse.redirect('/settings/connections?connected=slack')
+  return NextResponse.redirect(new URL('/settings/connections?connected=slack', url.origin))
 }
 

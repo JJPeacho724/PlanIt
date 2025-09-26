@@ -14,7 +14,17 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   const body = await req.json()
-  const task = await prisma.task.create({ data: { userId: (session.user as any).id ?? 'unknown', title: body.title, description: body.description ?? null } })
+  const task = await prisma.task.create({ 
+    data: { 
+      userId: (session.user as any).id ?? 'unknown', 
+      source: 'MANUAL',
+      title: body.title, 
+      description: body.description ?? null,
+      priority: body.priority ?? 1,
+      effortMinutes: body.effortMinutes ?? 60,
+      tags: body.tags ?? []
+    } 
+  })
   return NextResponse.json({ task })
 }
 

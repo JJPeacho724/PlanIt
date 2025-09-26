@@ -2,33 +2,454 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import './compact.css';
+
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 221.2 83.2% 53.3%;
-  --radius: 0.5rem;
+  --surface: hsl(0 0% 100% / 0.7);
+  --surface-strong: hsl(0 0% 100% / 0.85);
+  /* Layout constants */
+  --sidebar-width: 320px;
+  --header-height: 48px;
+}
+
+.dark {
+  --surface: hsl(222 20% 12% / 0.55);
+  --surface-strong: hsl(222 20% 12% / 0.7);
 }
 
 * {
   @apply border-border;
 }
+
 body {
-  @apply bg-background text-foreground;
+  @apply bg-bg text-text font-inter antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.4;
+  font-size: 16px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Minimal focus ring */
+.focus-ring:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Clean scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.3);
+}
+
+/* Clean Calendar Styling */
+.fc {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --fc-border-color: #e5e7eb;
+  --fc-button-text-color: #0f172a;
+  --fc-button-bg-color: #ffffff;
+  --fc-button-border-color: #e5e7eb;
+  --fc-button-hover-bg-color: #f8fafc;
+  --fc-button-hover-border-color: #e5e7eb;
+  --fc-button-active-bg-color: #2563eb;
+  --fc-button-active-border-color: #2563eb;
+  --fc-today-bg-color: rgba(37, 99, 235, 0.05);
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: visible;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  position: relative;
+  z-index: 0;
+}
+
+.fc {
+  margin: 16px;
+  height: 100% !important;
+  position: relative;
+}
+
+/* Ensure calendar remains interactive (avoid accidental pointer blocking) */
+.fc, .fc .fc-scroller, .fc-view-harness, .fc-timegrid-body, .fc-scrollgrid, .fc-header-toolbar, .fc-toolbar {
+  pointer-events: auto;
+}
+
+/* Make toolbar sit above grid layers */
+.fc .fc-header-toolbar, .fc-toolbar {
+  position: relative;
+  z-index: 2;
+}
+
+/* Ensure proper scrolling for time grid */
+.fc-timegrid-body {
+  overflow-y: auto !important;
+}
+
+/* Ensure calendar container fills available space */
+.fc-view-harness {
+  height: 100% !important;
+  overflow: visible !important;
+  position: relative;
+  z-index: 1;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: #e5e7eb;
+}
+
+/* Clean button styles */
+.fc-button-primary {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #0f172a !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  padding: 8px 12px !important;
+  height: auto !important;
+  line-height: 1.25 !important;
+  min-height: 32px !important;
+  transition: all 0.15s ease !important;
+  box-shadow: none !important;
+}
+
+.fc-button-primary:not(:disabled):hover {
+  background: #f8fafc !important;
+  border-color: #e5e7eb !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+
+.fc-button-primary:not(:disabled):active,
+.fc-button-primary:not(:disabled).fc-button-active {
+  background: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.fc-button-primary:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Clean toolbar */
+.fc-toolbar {
+  margin-bottom: 24px !important;
+}
+
+.fc-toolbar-title {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  font-family: 'Inter', sans-serif !important;
+  line-height: 1.25 !important;
+}
+
+.fc-toolbar-chunk {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Clean headers */
+.fc-col-header-cell {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 12px 0 !important;
+}
+
+.fc-col-header-cell-cushion {
+  color: #334155 !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  padding: 0 !important;
+}
+
+/* Clean day cells */
+.fc-daygrid-day, .fc-timegrid-slot {
+  background: #ffffff !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.fc-daygrid-day:hover {
+  background: #f8fafc !important;
+}
+
+.fc-daygrid-day-top {
+  flex-direction: row !important;
+  justify-content: center !important;
+}
+
+.fc-daygrid-day-number {
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  padding: 8px !important;
+  text-decoration: none !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-radius: 6px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 500 !important;
+}
+
+.fc-day-today {
+  background: rgba(37, 99, 235, 0.05) !important;
+}
+
+/* Clean time grid */
+.fc-timegrid-slot {
+  height: 48px !important;
+  position: relative;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fc-timegrid-slot-label {
+  color: #334155 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+/* Hover affordance for time grid slots */
+.fc-timegrid-slot:hover {
+  background: #f8fafc !important;
+}
+
+/* Subtle highlight on hover target area for dateClick */
+.fc-timegrid-slot:has(+ .fc-timegrid-slot):hover::after {
+  content: "";
+  position: absolute;
+  inset: 2px 4px;
+  border: 1px dashed rgba(15, 23, 42, 0.08);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+.fc-timegrid-axis {
+  width: 60px !important;
+}
+
+.fc-timegrid-slot-minor {
+  border-top: none !important;
+}
+
+/* Clean events */
+.fc-event {
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 4px 8px !important;
+  margin: 1px !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+  cursor: pointer !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.15s ease !important;
+}
+
+.fc-event:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+  transform: translateY(-1px);
+}
+
+.fc-event[data-selected="true"] {
+  outline: 2px solid rgba(37, 99, 235, 0.6);
+  outline-offset: 1px;
+}
+
+/* Improve event content readability */
+.fc .fc-event .fc-event-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fc-event-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fc-event-title-line {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.fc-event-title-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.fc-timegrid-event .fc-event-title-text {
+  -webkit-line-clamp: 1;
+}
+.fc-event-subtext {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Increase vertical spacing inside cells to avoid crowding */
+.fc-daygrid-event-harness {
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+}
+.fc-daygrid-day-events {
+  margin: 2px 4px !important;
+}
+
+/* Category color legibility: ensure text is readable against bg */
+.fc-event[data-type="draft"] {
+  background-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+.fc-event[data-type="external"] {
+  filter: saturate(0.9) brightness(1.02);
+}
+
+/* Hover focus styles */
+.fc .fc-daygrid-event, .fc .fc-timegrid-event {
+  outline: none;
+}
+.fc .fc-daygrid-event:focus-visible, .fc .fc-timegrid-event:focus-visible {
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35) !important;
+}
+
+/* View switch animation */
+/* Directional whoosh animations */
+.calendar-animating-left .fc-view-harness {
+  animation: fc-view-left 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.calendar-animating-right .fc-view-harness {
+  animation: fc-view-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.calendar-animating-fade .fc-view-harness {
+  animation: fc-view-fade 220ms ease;
+}
+
+@keyframes fc-view-left {
+  from { opacity: 0.6; transform: translateX(14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fc-view-right {
+  from { opacity: 0.6; transform: translateX(-14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fc-view-fade {
+  from { opacity: 0.75; transform: scale(0.995); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fc-event-title {
+  font-weight: 500 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.fc-event-time {
+  font-weight: 400 !important;
+  opacity: 0.9 !important;
+}
+
+/* Minimal utilities */
+.section-divider {
+  border-bottom: 1px solid #e5e7eb;
+  margin: 24px 0;
+}
+
+.btn {
+  @apply px-3 py-2 rounded-md border border-border bg-bg text-text text-sm font-medium transition-colors;
+}
+
+.btn:hover {
+  @apply bg-surface;
+}
+
+.btn:focus {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+.btn-primary {
+  @apply bg-primary text-white border-primary;
+}
+
+.btn-primary:hover {
+  @apply bg-primary/90;
+}
+
+.btn-ghost {
+  @apply border-transparent;
+}
+
+.btn-ghost:hover {
+  @apply bg-surface border-border;
+}
+
+/* Glass card surface */
+.card-glass {
+  background: var(--surface);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+  border: 1px solid hsl(220 14% 90% / .6);
+}
+
+/* Scroll shadows + breathing room */
+.scroll-shadow {
+  --shadow: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0));
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(white, white) border-box;
+  position: relative;
+}
+.scroll-shadow:before,
+.scroll-shadow:after {
+  content: "";
+  position: sticky;
+  display: block;
+  height: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+.scroll-shadow:before {
+  top: 0;
+  background: var(--shadow);
+}
+.scroll-shadow:after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.06), rgba(0,0,0,0));
+}
+
+/* Softer borders + bigger gutter between calendar and rail */
+.calendar-container { 
+  gap: 24px; 
 }
 

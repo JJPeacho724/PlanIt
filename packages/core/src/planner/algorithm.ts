@@ -7,9 +7,9 @@ import {
   PlannerResult,
   PlannerTaskInput,
   ResolveConflictsMode,
-} from './types'
-import { addMinutes, clampToDayWindow, compareAsc, isWorkDay, minutesBetween, overlaps, toDateKey } from './time'
-import { scoreTask } from './scoring'
+} from './types.js'
+import { addMinutes, clampToDayWindow, compareAsc, isWorkDay, minutesBetween, overlaps, toDateKey } from './time.js'
+import { scoreTask } from './scoring.js'
 
 type FreeBlock = { start: Date; end: Date }
 
@@ -214,7 +214,11 @@ export function buildPlan(args: BuildPlannerArgs): PlannerResult {
     const firstDay = dailyPlan[0]
     if (firstDay && firstDay.events && firstDay.events.length > 0) {
       const firstEvent = firstDay.events[0]
-      weekStart = new Date(firstEvent.start)
+      if (firstEvent) {
+        weekStart = new Date(firstEvent.start)
+      } else {
+        weekStart = new Date(now)
+      }
     } else {
       weekStart = new Date(now)
     }

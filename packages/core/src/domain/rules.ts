@@ -36,6 +36,21 @@ const ACTION_PATTERNS: RegExp[] = [
   /\bASAP\b/i,
   /\btomorrow|today|next week|monday|tuesday|wednesday|thursday|friday\b/i,
   /\b\d{1,2}\/(\d{1,2})\/(\d{2,4})/,
+  /\bmeeting\b/i,
+  /\bcall\b/i,
+  /\binterview\b/i,
+  /\bappointment\b/i,
+  /\bzoom\b/i,
+  /\bteams\b/i,
+  /\bwebex\b/i,
+  /\bcalendar invite\b/i,
+  /\bwhen:\b/i,
+  /\bwhere:\b/i,
+  /\bat\s+\d{1,2}:\d{2}/i,
+  /\b\d{1,2}(am|pm)\b/i,
+  /\bdeadline\b/i,
+  /\burgent\b/i,
+  /\breminder\b/i,
 ]
 
 export function evaluateMessageForAction(message: MessageLike): ActionCandidate {

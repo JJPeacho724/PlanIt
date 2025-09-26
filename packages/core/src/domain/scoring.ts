@@ -1,4 +1,4 @@
-import { TaskInput } from './task'
+import { TaskInput } from './task.js'
 
 export function scoreTask(task: TaskInput): number {
   let score = 0

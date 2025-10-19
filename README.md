@@ -9,7 +9,7 @@ Problem we solve
 - Users spend a large portion of their day triaging email, scheduling tasks, and deciding what to work on next.
 - Fragmented context across inbox and calendar leads to missed deadlines and inefficient planning.
 
-Why it matters (value props for PMs)
+Why it matters 
 - Time saved: Automates task extraction and scheduling so users spend less time planning and more time executing.
 - Reduced context switching: Consolidates emails, meeting prep, and tasks into a single daily plan.
 - Higher on-time delivery: Prioritized, time-boxed tasks increase the odds work gets done.
@@ -20,7 +20,7 @@ Who benefits
 - Managers coordinating priorities across calendars.
 - Small teams needing lightweight, automated daily planning without changing existing tools.
 
-Key product highlights (what to show PMs/recruiters)
+Key product highlights 
 - Email-to-task extraction: Reliable parsing of action items, deadlines, and follow-ups from Gmail.
 - Intelligent scheduling: Auto-fit tasks around meetings with estimated durations and buffer time.
 - Two-way Calendar sync: Suggest tasks become calendar items when accepted.
@@ -30,7 +30,6 @@ Key product highlights (what to show PMs/recruiters)
 
 Demo & assets
 - Live demo: Run locally (Quick Start below) and connect a Google account to see the onboarding & planner flow.
-- Screenshots/GIFs: Add 1–2 clear images showing (a) inbox -> extracted tasks and (b) daily timeline view. These are high-conversion assets for PM recruiting pages.
 
 How it works (high level)
 1. OAuth connect to Gmail & Calendar.
@@ -53,32 +52,6 @@ Minimal setup:
 4. npm run dev
 5. Open http://localhost:3000 and connect Google account to see the planner in action.
 
-Success metrics PMs will ask for
-- Activation: % of users who connect Gmail & Calendar during onboarding
-- Daily active planners: DAU who review/accept a generated daily plan
-- Time saved: average minutes saved per user per day (measured via self-report or behavior proxy)
-- Task completion rate: % of AI-suggested tasks completed within their suggested time window
-- Retention: 7- & 30-day retention of active users
-
-Roadmap (PM-facing)
-- Short-term: improved extraction accuracy, richer explainability, mobile-first timeline
-- Mid-term: team-level planning and shared timelines, Slack/MS Teams integrations
-- Long-term: calendar-aware suggestions across teams, enterprise SSO & compliance
-
-What to include in a recruiting/PM one-pager
-- Elevator pitch + 2–3 screenshots
-- Key metrics (activation, DAU, retention) or placeholders if early
-- Top 3 product challenges and opportunities (extraction accuracy, explainability, onboarding friction)
-- Role expectations for PM candidates (ownership areas, KPIs, collaboration model)
-
-For PM candidates / recruiters
-If you're a product manager interested in evaluating PlanIt or joining the team, here’s what we typically look for:
-- Experience shipping AI-assisted workflows or SaaS products
-- Strong metrics-driven mindset (activation, retention, task completion)
-- Empathy for user workflows tied to email & calendar
-
-Interested in a demo or hiring conversation?
-- Add a clear screenshot or demo GIF to the repo and open an issue titled "PM Demo Request" or email the maintainer.
 
 Where to find more docs
 - GMAIL_DAY_PLANNING_SETUP.md — Gmail ingestion & setup

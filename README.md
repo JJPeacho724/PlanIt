@@ -1,65 +1,95 @@
-# PlanIt — AI-Powered Personal Planner
+# PlanIt — AI-Powered Personal Planner (PM-Friendly)
 
-PlanIt helps you take back control of your day by turning your inbox and calendar into a smart, prioritized daily plan. It ingests Gmail messages, analyzes your Google Calendar, and uses AI to surface the most important tasks, create a time-aware schedule, and keep your day on track.
+PlanIt turns your inbox and calendar into a clear, prioritized daily plan so busy professionals can focus on outcomes, not admin. This README highlights the product vision, user value, and the metrics and features that product managers and recruiters care about.
 
-Why PlanIt
-- Save time: automatically extract tasks and commitments from email and calendar events so you don't have to.
-- Get a clear plan: receive an ordered, time-aware daily agenda with estimated durations and priorities.
-- Stay synchronized: two-way Google Calendar sync keeps events and tasks aligned.
-- Learn and adapt: the AI personalizes plans based on your habits and feedback.
+One-line summary
+PlanIt ingests Gmail and Google Calendar, extracts commitments and action items, and generates a prioritized, time-aware daily agenda using AI.
 
-Key product features
-- Email-to-task extraction: scans Gmail for action items, deadlines, and follow-ups and turns them into tasks.
-- Intelligent day planning: generates a prioritized schedule that fits tasks around existing events and estimated durations.
-- Google Calendar integration: syncs events and suggested tasks with your Google Calendar for a seamless experience.
-- Priority scoring and recommendations: tasks are scored so you see what matters most first.
-- Privacy-first design: sensitive tokens are encrypted and user data is stored in your account.
+Problem we solve
+- Users spend a large portion of their day triaging email, scheduling tasks, and deciding what to work on next.
+- Fragmented context across inbox and calendar leads to missed deadlines and inefficient planning.
+
+Why it matters (value props for PMs)
+- Time saved: Automates task extraction and scheduling so users spend less time planning and more time executing.
+- Reduced context switching: Consolidates emails, meeting prep, and tasks into a single daily plan.
+- Higher on-time delivery: Prioritized, time-boxed tasks increase the odds work gets done.
+- Easy integration: Works with Gmail & Google Calendar (no vendor lock-in for core workflows).
+
+Who benefits
+- Individual contributors and knowledge workers who rely on email for requests and info.
+- Managers coordinating priorities across calendars.
+- Small teams needing lightweight, automated daily planning without changing existing tools.
+
+Key product highlights (what to show PMs/recruiters)
+- Email-to-task extraction: Reliable parsing of action items, deadlines, and follow-ups from Gmail.
+- Intelligent scheduling: Auto-fit tasks around meetings with estimated durations and buffer time.
+- Two-way Calendar sync: Suggest tasks become calendar items when accepted.
+- Priority scoring & explainability: Tasks are scored and surfaced with human-readable reasons why they were prioritized.
+- Feedback loop & personalization: The AI adapts to user preferences and reschedules based on behavior.
+- Privacy & token encryption: Sensitive tokens are encrypted at rest; users control account access.
+
+Demo & assets
+- Live demo: Run locally (Quick Start below) and connect a Google account to see the onboarding & planner flow.
+- Screenshots/GIFs: Add 1–2 clear images showing (a) inbox -> extracted tasks and (b) daily timeline view. These are high-conversion assets for PM recruiting pages.
 
 How it works (high level)
-1. Connect your Google account (OAuth) to allow safe access to Gmail and Calendar.
-2. PlanIt ingests and analyzes incoming emails and calendar events on a scheduled basis.
-3. The AI extracts tasks, estimates durations, assigns priorities, and generates a suggested daily timeline.
-4. You review, adjust, and confirm the day's plan — changes sync back to your Google Calendar.
+1. OAuth connect to Gmail & Calendar.
+2. Background ingestion and NLP-based extraction of tasks from email.
+3. AI planner scores, estimates duration, and schedules tasks into a suggested timeline.
+4. User reviews and syncs accepted items to Google Calendar.
 
-Quick start (development)
+Quick start (dev)
 Prerequisites:
 - Node.js 18+
 - PostgreSQL
-- Redis (optional for caching)
-- Google Cloud project with Gmail & Calendar APIs enabled
-- OpenAI API key (for AI features)
+- Redis (optional)
+- Google Cloud project with Gmail + Calendar APIs
+- OpenAI API key
 
 Minimal setup:
-1. Copy .env.example to .env and set the variables (DATABASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, OPENAI_API_KEY, NEXTAUTH_SECRET, ENCRYPTION_KEY).
-2. Install dependencies: npm install
-3. Create/generate the database client and run migrations (Prisma): npm run prisma:generate && npm run prisma:migrate
-4. Start the app: npm run dev
-5. Open http://localhost:3000 and follow the onboarding to connect Gmail & Calendar.
+1. Copy .env.example to .env and set DATABASE_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, OPENAI_API_KEY, NEXTAUTH_SECRET, ENCRYPTION_KEY.
+2. npm install
+3. npm run prisma:generate && npm run prisma:migrate
+4. npm run dev
+5. Open http://localhost:3000 and connect Google account to see the planner in action.
 
-Configuration pointers
-- Gmail ingestion is controlled by the OAuth scopes and background jobs; check GMAIL_DAY_PLANNING_SETUP.md for deployment specifics.
-- OpenAI usage is governed by OPENAI_API_KEY and usage limits—monitor your quota in production.
-- Encryption: ENCRYPTION_KEY protects sensitive tokens at rest; keep it secret.
+Success metrics PMs will ask for
+- Activation: % of users who connect Gmail & Calendar during onboarding
+- Daily active planners: DAU who review/accept a generated daily plan
+- Time saved: average minutes saved per user per day (measured via self-report or behavior proxy)
+- Task completion rate: % of AI-suggested tasks completed within their suggested time window
+- Retention: 7- & 30-day retention of active users
 
-Where to find more setup docs
+Roadmap (PM-facing)
+- Short-term: improved extraction accuracy, richer explainability, mobile-first timeline
+- Mid-term: team-level planning and shared timelines, Slack/MS Teams integrations
+- Long-term: calendar-aware suggestions across teams, enterprise SSO & compliance
+
+What to include in a recruiting/PM one-pager
+- Elevator pitch + 2–3 screenshots
+- Key metrics (activation, DAU, retention) or placeholders if early
+- Top 3 product challenges and opportunities (extraction accuracy, explainability, onboarding friction)
+- Role expectations for PM candidates (ownership areas, KPIs, collaboration model)
+
+For PM candidates / recruiters
+If you're a product manager interested in evaluating PlanIt or joining the team, here’s what we typically look for:
+- Experience shipping AI-assisted workflows or SaaS products
+- Strong metrics-driven mindset (activation, retention, task completion)
+- Empathy for user workflows tied to email & calendar
+
+Interested in a demo or hiring conversation?
+- Add a clear screenshot or demo GIF to the repo and open an issue titled "PM Demo Request" or email the maintainer.
+
+Where to find more docs
 - GMAIL_DAY_PLANNING_SETUP.md — Gmail ingestion & setup
-- GOOGLE_OAUTH_SETUP.md — OAuth configuration and redirect URIs
-- PERSONALIZED_PLANNER_INTEGRATION.md — advanced personalization and tuning
-
-Troubleshooting (common)
-- OAuth/redirect errors: confirm your redirect URIs and test user list in Google Cloud.
-- Database connection: verify DATABASE_URL and that Postgres is running and accessible.
-- OpenAI errors: check API key and quotas.
+- GOOGLE_OAUTH_SETUP.md — OAuth configuration
+- PERSONALIZED_PLANNER_INTEGRATION.md — advanced personalization
 
 Contributing
-We welcome improvements. Typical flow:
-1. Fork the repo
-2. Create a feature branch
-3. Run tests and linting
-4. Open a pull request describing your change
+- Fork → feature branch → tests & lint → PR. See CONTRIBUTING.md for details.
 
 License
 This project is private and proprietary.
 
 Contact
-If you need help or want to demo the product, open an issue or contact the maintainers.
+Open an issue or tag @JJPeacho724 on GitHub to request a demo or additional assets.
